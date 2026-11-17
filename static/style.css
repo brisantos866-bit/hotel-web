@@ -1,0 +1,100 @@
+* { box-sizing: border-box; }
+body {
+  font-family: 'Segoe UI', sans-serif;
+  background: #1e1e2e;
+  color: #cdd6f4;
+  margin: 0;
+  padding: 20px;
+}
+nav {
+  background: #11111b;
+  padding: 12px 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+nav a {
+  color: #89b4fa;
+  text-decoration: none;
+  margin-right: 18px;
+  font-weight: 600;
+}
+nav a:hover { color: #a6e3a1; }
+
+h2 { color: #cdd6f4; border-bottom: 1px solid #45475a; padding-bottom: 6px; }
+
+form {
+  background: #313244;
+  padding: 15px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+input, select {
+  background: #1e1e2e;
+  color: #cdd6f4;
+  border: 1px solid #45475a;
+  padding: 7px 10px;
+  border-radius: 5px;
+  margin: 3px 5px 3px 0;
+  font-size: 14px;
+}
+button {
+  background: #a6e3a1;
+  color: #1e1e2e;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 5px;
+  font-weight: 600;
+  cursor: pointer;
+}
+button:hover { background: #94e2d5; }
+button.danger { background: #f38ba8; }
+button.warn { background: #f9e2af; }
+button.info { background: #89b4fa; }
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+  background: #313244;
+  border-radius: 8px;
+  overflow: hidden;
+}
+th, td {
+  padding: 10px;
+  border-bottom: 1px solid #45475a;
+  text-align: left;
+}
+th { background: #11111b; color: #89b4fa; }
+tr:hover { background: #3b3b52; }
+
+.flash { padding: 10px 15px; border-radius: 6px; margin-bottom: 12px; }
+.flash.ok { background: #a6e3a1; color: #1e1e2e; }
+.flash.error { background: #f38ba8; color: #1e1e2e; }
+
+/* ----- Ticket estilo 58mm ----- */
+.ticket-wrap {
+  max-width: 380px;
+  margin: 0 auto;
+  background: #fff;
+  color: #000;
+  padding: 15px;
+  border-radius: 6px;
+  font-family: 'Courier New', monospace;
+  font-size: 13px;
+  white-space: pre-wrap;
+}
+.ticket-actions { text-align: center; margin: 15px 0; }
+
+/* ----- Impresión térmica 58mm ----- */
+@media print {
+  body { background: #fff; color: #000; padding: 0; margin: 0; }
+  nav, .ticket-actions, .no-print { display: none !important; }
+  .ticket-wrap {
+    max-width: 58mm;
+    width: 58mm;
+    font-size: 10px;
+    padding: 0;
+    border-radius: 0;
+    box-shadow: none;
+  }
+  @page { size: 58mm auto; margin: 2mm; }
+}

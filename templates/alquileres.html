@@ -1,0 +1,61 @@
+{% extends "base.html" %}
+{% block titulo %}Alquileres{% endblock %}
+{% block contenido %}
+<h2>🔑 Alquileres activos</h2>
+
+<form method="post" style="margin-bottom:20px; display:flex; flex-wrap:wrap; gap:10px; background:#1e1e2e; padding:15px; border-radius:8px;">
+  <select name="habitacion_id" required>
+    <option value="">— Habitación —</option>
+    {% for h in habitaciones %}
+      <option value="{{h.id}}">{{h.numero}} ({{h.tipo}}) - {{ "%.2f"|format(h.precio_dia) }}</option>
+    {% endfor %}
+  </select>
+
+  <select name="huesped_id" required>
+    <option value="">— Huésped —</option>
+    {% for g in huespedes %}
+      <option value="{{g.id}}">{{g.nombre}}</option>
+    {% endfor %}
+  </select>
+
+  <select name="moneda">
+    <option value="USD">Dólares (USD)</option>
+    <option value="HNL">Lempiras (HNL)</option>
+    <option value="EUR">Euros (EUR)</option>
+  </select>
+
+  <select name="periodo">
+    <option value="dia">Por día</option>
+    <option value="noche">Por noche</option>
+    <option value="semana">Por semana</option>
+    <option value="mes">Por mes</option>
+  </select>
+
+  <input type="number" name="cantidad_periodos" placeholder="Cantidad" min="1" value="1" required>
+  <input type="number" name="tarifa" step="0.01" placeholder="Tarifa" min="0" required>
+  <input name="observaciones" placeholder="Observaciones">
+
+  <button class="ok">Registrar alquiler</button>
+</form>
+
+<table>
+  <tr><th>#</th><th>Hab</th><th>Huésped</th><th>Período</th><th>Tarifa</th><th>Total</th><th></th></tr>
+  {% for a in alquileres %}
+  <tr>
+    <td>{{a.id}}</td>
+    <td>{{a.hab_numero}}</td>
+    <td>{{a.huesped}}</td>
+    <td>{{a.cantidad_periodos}} {{a.periodo}}(s)</td>
+    <td>{{a.moneda}} {{ "%.2f"|format(a.tarifa) }}</td>
+    <td>{{a.moneda}} {{ "%.2f"|format(a.total) }}</td>
+    <td>
+      <a href="/ticket/{{a.id}}"><button class="info">🎫</button></a>
+      <form method="post" action="/alquileres/{{a.id}}/cerrar" style="display:inline"
+            onsubmit="return confirm('¿Cerrar alquiler #{{a.id}}?')">
+        <button class="danger">✅ Cerrar</button>
+      </form>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}

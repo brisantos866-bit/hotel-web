@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+{% block contenido %}
+<h2>👤 Huéspedes</h2>
+
+<form method="post">
+  <input name="nombre" placeholder="Nombre" required>
+  <input name="documento" placeholder="Documento">
+  <input name="telefono" placeholder="Teléfono (ej: 50499998888)">
+  <input name="correo" placeholder="Correo">
+  <button>➕ Registrar</button>
+</form>
+
+<table>
+  <tr><th>Nombre</th><th>Documento</th><th>Teléfono</th><th>Correo</th></tr>
+  {% for g in huespedes %}
+    <tr>
+      <td>{{g.nombre}}</td>
+      <td>{{g.documento}}</td>
+      <td>{{g.telefono}}</td>
+      <td>{{g.correo}}</td>
+    </tr>
+  {% endfor %}
+</table>
+{% endblock %}

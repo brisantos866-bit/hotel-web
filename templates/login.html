@@ -1,0 +1,17 @@
+{% extends "base.html" %}
+{% block titulo %}Acceso{% endblock %}
+{% block contenido %}
+<div style="max-width:380px; margin:60px auto; text-align:center;">
+  <h2>🏨 Acceso Hotel</h2>
+  <p>Ingresa el correo y PIN de tu hotel</p>
+  <form method="post">
+    <input type="email" name="email" placeholder="correo@hotel.com" required
+           style="width:100%; padding:10px; margin:8px 0;">
+    <input type="text" name="pin" placeholder="PIN de 6 dígitos" required
+           inputmode="numeric" maxlength="6"
+           style="width:100%; padding:10px; margin:8px 0; font-size:20px;
+                  text-align:center; letter-spacing:6px;">
+    <button class="ok" style="width:100%;">Entrar</button>
+  </form>
+</div>
+{% endblock %}

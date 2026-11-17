@@ -1,0 +1,140 @@
+{% extends "base.html" %}
+{% block titulo %}Mensajes{% endblock %}
+{% block contenido %}
+<h2>📱 Mensajes para celular</h2>
+<p style="color:#a6adc8">
+  Elige un alquiler activo y una plantilla. Luego envía por WhatsApp, SMS, copia o comparte.
+</p>
+
+<form id="form-mensaje" onsubmit="return false;">
+  <label>Alquiler activo:
+    <select id="sel-alquiler" required style="min-width:280px">
+      <option value="">— Selecciona —</option>
+      {% for a in alquileres %}
+        <option value="{{a.id}}">
+          #{{a.id}} · Hab {{a.hab_numero}} · {{a.huesped}} · {{a.moneda}} {{ "%.2f"|format(a.total) }}
+        </option>
+      {% endfor %}
+    </select>
+  </label>
+
+  <label>Plantilla:
+    <select id="sel-plantilla" style="min-width:260px">
+      <option value="">— Mensaje por defecto —</option>
+      {% for p in plantillas %}
+        <option value="{{p.id}}">{{p.nombre}}</option>
+      {% endfor %}
+    </select>
+  </label>
+
+  <button class="info" type="button" onclick="generarMensaje()">🔄 Generar mensaje</button>
+</form>
+
+<div id="resultado-mensaje" style="display:none; margin-top:15px">
+  <label>Texto del mensaje (editable):</label>
+  <textarea id="txt-mensaje" rows="8" style="width:100%; background:#1e1e2e; color:#cdd6f4;
+            border:1px solid #45475a; padding:10px; border-radius:6px;
+            font-family: monospace; font-size: 14px"></textarea>
+
+  <div style="margin-top:10px">
+    <a id="btn-wa" target="_blank"><button class="ok">💬 WhatsApp</button></a>
+    <a id="btn-sms"><button class="warn">✉️ SMS</button></a>
+    <button class="info" onclick="copiarMensaje()">📋 Copiar</button>
+    <button class="ok" onclick="compartirMensaje()">📤 Compartir</button>
+  </div>
+  <p id="aviso-tel" class="flash error" style="display:none">
+    ⚠️ El huésped no tiene teléfono registrado.
+  </p>
+</div>
+
+<h2 style="margin-top:35px">✏️ Plantillas editables</h2>
+<p style="color:#a6adc8; font-size:13px">
+  Variables: <code>{huesped}</code>, <code>{hotel_nombre}</code>, <code>{hab_numero}</code>,
+  <code>{hab_tipo}</code>, <code>{cantidad}</code>, <code>{periodo_texto}</code>,
+  <code>{simbolo}</code>, <code>{total}</code>, <code>{moneda}</code>.
+</p>
+
+<form method="post">
+  <input name="nombre" placeholder="Nombre de la plantilla" required style="min-width:220px">
+  <textarea name="contenido" rows="3" required placeholder="Contenido de la plantilla…"
+            style="width:100%; background:#1e1e2e; color:#cdd6f4;
+                   border:1px solid #45475a; padding:8px; border-radius:6px;
+                   font-family: monospace; margin-top:5px"></textarea>
+  <button class="ok">➕ Guardar plantilla</button>
+</form>
+
+<table>
+  <tr><th>Nombre</th><th>Contenido</th><th></th></tr>
+  {% for p in plantillas %}
+  <tr>
+    <td>{{p.nombre}}</td>
+    <td style="white-space:pre-wrap; font-family:monospace; font-size:12px">{{p.contenido}}</td>
+    <td>
+      <form method="post" action="/mensajes/{{p.id}}/eliminar" style="display:inline"
+            onsubmit="return confirm('¿Eliminar plantilla {{p.nombre}}?')">
+        <button class="danger">🗑️</button>
+      </form>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+
+<script>
+let datosActuales = null;
+
+async function generarMensaje() {
+  const aid = document.getElementById('sel-alquiler').value;
+  const pid = document.getElementById('sel-plantilla').value;
+  if (!aid) { alert('Selecciona un alquiler'); return; }
+  const url = `/api/mensaje/${aid}` + (pid ? `?plantilla=${pid}` : '');
+  const r = await fetch(url);
+  const data = await r.json();
+  if (!data.ok) { alert(data.error || 'Error'); return; }
+  datosActuales = data;
+  document.getElementById('resultado-mensaje').style.display = 'block';
+  document.getElementById('txt-mensaje').value = data.texto;
+  const btnWa = document.getElementById('btn-wa');
+  const btnSms = document.getElementById('btn-sms');
+  const aviso = document.getElementById('aviso-tel');
+  if (data.telefono) {
+    btnWa.href = data.wa_link;
+    btnSms.href = data.sms_link;
+    btnWa.style.display = 'inline-block';
+    btnSms.style.display = 'inline-block';
+    aviso.style.display = 'none';
+  } else {
+    btnWa.style.display = 'none';
+    btnSms.style.display = 'none';
+    aviso.style.display = 'block';
+  }
+}
+
+document.getElementById('txt-mensaje').addEventListener('input', () => {
+  if (!datosActuales || !datosActuales.telefono) return;
+  const nuevo = encodeURIComponent(document.getElementById('txt-mensaje').value);
+  document.getElementById('btn-wa').href =
+    `https://wa.me/${datosActuales.telefono}?text=${nuevo}`;
+  document.getElementById('btn-sms').href =
+    `sms:${datosActuales.telefono}?body=${nuevo}`;
+});
+
+function copiarMensaje() {
+  const t = document.getElementById('txt-mensaje').value;
+  navigator.clipboard.writeText(t).then(() => alert('✅ Mensaje copiado'))
+    .catch(() => {
+      const ta = document.getElementById('txt-mensaje');
+      ta.select(); document.execCommand('copy');
+      alert('✅ Mensaje copiado');
+    });
+}
+
+async function compartirMensaje() {
+  const t = document.getElementById('txt-mensaje').value;
+  if (navigator.share) {
+    try { await navigator.share({ title: 'Mensaje hotel', text: t }); } catch(e){}
+  } else {
+    copiarMensaje();
+  }
+}
+</script>
+{% endblock %}

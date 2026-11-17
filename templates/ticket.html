@@ -1,0 +1,50 @@
+{% extends "base.html" %}
+{% block titulo %}Ticket{% endblock %}
+{% block contenido %}
+<h2>🎫 Ticket #{{aid}}</h2>
+
+<div class="ticket-actions no-print">
+  <button class="info" onclick="window.print()">🖨️ Imprimir Ticket (58mm)</button>
+  
+  {% if wa_link %}
+    <a href="{{ wa_link }}" target="_blank"><button class="ok">💬 WhatsApp</button></a>
+  {% endif %}
+  
+  {% if sms_link %}
+    <a href="{{ sms_link }}"><button class="warn">✉️ SMS</button></a>
+  {% endif %}
+  
+  <button class="info" onclick="copiarTicket()">📋 Copiar</button>
+  <button class="ok" onclick="compartirTicket()">📤 Compartir</button>
+  
+  <a href="/alquileres"><button class="warn">← Volver</button></a>
+</div>
+
+{% if not wa_link %}
+  <p class="flash error">⚠️ Huésped sin teléfono registrado. Solo puedes copiar o compartir.</p>
+{% endif %}
+
+<div class="ticket-wrap" id="ticket-texto">{{ texto }}</div>
+
+<script>
+function copiarTicket() {
+  const t = document.getElementById('ticket-texto').innerText;
+  navigator.clipboard.writeText(t).then(() => alert('✅ Ticket copiado'))
+    .catch(() => {
+      const ta = document.createElement('textarea');
+      ta.value = t; document.body.appendChild(ta);
+      ta.select(); document.execCommand('copy');
+      document.body.removeChild(ta);
+      alert('✅ Ticket copiado');
+    });
+}
+async function compartirTicket() {
+  const t = document.getElementById('ticket-texto').innerText;
+  if (navigator.share) {
+    try { await navigator.share({ title: 'Ticket #{{aid}}', text: t }); } catch(e){}
+  } else {
+    copiarTicket();
+  }
+}
+</script>
+{% endblock %}

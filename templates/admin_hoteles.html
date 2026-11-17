@@ -1,0 +1,40 @@
+{% extends "base.html" %}
+{% block titulo %}Administrar hoteles{% endblock %}
+{% block contenido %}
+<h2>🏨 Administrar hoteles</h2>
+
+<form method="post" style="margin-bottom:20px; background:#1e1e2e; padding:15px; border-radius:8px;">
+  <h3 style="margin-bottom:10px; color:#89b4fa;">➕ Registrar nuevo hotel</h3>
+  <input name="nombre" placeholder="Nombre del hotel" required style="min-width:200px;">
+  <input name="email" type="email" placeholder="correo@hotel.com" required style="min-width:200px;">
+  <input name="telefono" placeholder="Teléfono">
+  <input name="direccion" placeholder="Dirección">
+  <button class="ok" style="margin-top:10px;">Crear hotel y generar PIN</button>
+</form>
+
+<table>
+  <tr>
+    <th>Hotel</th>
+    <th>Email (Usuario)</th>
+    <th>PIN de Acceso</th>
+    <th>Acciones</th>
+  </tr>
+  {% for h in hoteles %}
+  <tr>
+    <td><strong>{{h.nombre}}</strong></td>
+    <td>{{h.email}}</td>
+    <td>
+      <span style="font-family:monospace; font-size:16px; background:#313244; padding:4px 8px; border-radius:4px; color:#a6e3a1;">
+        {{h.pin}}
+      </span>
+    </td>
+    <td>
+      <form method="post" action="/admin/hoteles/{{h.id}}/regenerar-pin" style="display:inline"
+            onsubmit="return confirm('¿Regenerar PIN para {{h.nombre}}? El PIN actual dejará de funcionar.')">
+        <button class="warn">🔄 Cambiar PIN</button>
+      </form>
+    </td>
+  </tr>
+  {% endfor %}
+</table>
+{% endblock %}
