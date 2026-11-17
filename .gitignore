@@ -1,7 +1,13 @@
+.env
+.venv/
+venv/
 __pycache__/
 *.pyc
-.env
-venv/
-.venv/
-*.sqlite3
+__pycache__/
+*.pyo
+*.pyd
+*.log
 .DS_Store
+Thumbs.db
+.vscode/
+.idea/

@@ -6,7 +6,7 @@ from dotenv import load_dotenv
 load_dotenv()
 
 from functools import wraps
-from flask import Flask, render_template, request, redirect, url_for, flash, session
+from flask import Flask, render_template, request, redirect, url_for, flash, session, jsonify
 from db import (
     migrar, migrar_mensajes,
     crear_hotel, listar_hoteles, obtener_hotel, obtener_hotel_por_email_pin, regenerar_pin_hotel,
@@ -60,6 +60,52 @@ def login():
 def logout():
     session.clear()
     return redirect(url_for("login"))
+
+
+# ==================== REGISTRO PÚBLICO DE HOTEL ====================
+
+@app.route("/registro", methods=["POST"])
+def registro_hotel():
+    nombre = request.form.get("nombre", "").strip()
+    email = request.form.get("email", "").strip().lower()
+    telefono = request.form.get("telefono", "").strip()
+    direccion = request.form.get("direccion", "").strip()
+
+    if not nombre or not email:
+        flash("Nombre y correo son obligatorios.", "error")
+        return redirect(url_for("login"))
+
+    try:
+        hid, pin = crear_hotel(nombre, email, telefono, direccion)
+    except Exception as e:
+        flash(f"Error al registrar: {e}", "error")
+        return redirect(url_for("login"))
+
+    # Mensaje limpio: no muestra el PIN al público
+    flash("✅ Solicitud recibida. Contacta al administrador para activar tu cuenta y recibir tu PIN.", "ok")
+    return redirect(url_for("login"))
+
+
+# ==================== PANEL DE CONTROL DE PINES (SOLO PARA TI) ====================
+
+@app.route("/admin/control-pin", methods=["GET"])
+def admin_control_pin():
+    # Protección con clave secreta en la URL
+    clave_secreta = request.args.get("clave")
+    if clave_secreta != "hotelmaster2026": 
+        return "Acceso denegado. Falta la clave secreta.", 403
+        
+    return render_template("admin_control_pin.html", hoteles=listar_hoteles())
+
+
+@app.route("/admin/control-pin/<int:hid>/regenerar", methods=["POST"])
+def admin_regenerar_pin(hid):
+    try:
+        nuevo_pin = regenerar_pin_hotel(hid)
+        flash(f"✅ PIN regenerado exitosamente: {nuevo_pin}", "ok")
+    except Exception as e:
+        flash(f"Error al regenerar PIN: {e}", "error")
+    return redirect(url_for("admin_control_pin", clave="hotelmaster2026"))
 
 
 # ==================== INICIO ====================
@@ -273,35 +319,6 @@ def api_mensaje(aid):
         "wa_link": f"https://wa.me/{tel}?text={urllib.parse.quote(texto)}" if tel else None,
         "sms_link": generar_enlace_sms(tel, texto) if tel else None,
     }
-
-
-# ==================== ADMIN DE HOTELES ====================
-
-@app.route("/admin/hoteles", methods=["GET", "POST"])
-def admin_hoteles():
-    if request.method == "POST":
-        try:
-            hid, pin = crear_hotel(
-                request.form["nombre"].strip(),
-                request.form["email"].strip(),
-                request.form.get("telefono", "").strip(),
-                request.form.get("direccion", "").strip(),
-            )
-            flash(f"Hotel creado. PIN: {pin}", "ok")
-        except Exception as e:
-            flash(f"Error: {e}", "error")
-        return redirect(url_for("admin_hoteles"))
-    return render_template("admin_hoteles.html", hoteles=listar_hoteles())
-
-
-@app.route("/admin/hoteles/<int:hid>/regenerar-pin", methods=["POST"])
-def regenerar_pin(hid):
-    try:
-        nuevo_pin = regenerar_pin_hotel(hid)
-        flash(f"Nuevo PIN: {nuevo_pin}", "ok")
-    except Exception as e:
-        flash(f"Error: {e}", "error")
-    return redirect(url_for("admin_hoteles"))
 
 
 # ==================== INICIO ====================

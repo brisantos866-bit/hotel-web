@@ -1,0 +1,46 @@
+{% extends "base.html" %}
+{% block titulo %}Editar habitación{% endblock %}
+{% block contenido %}
+<h2>✏️ Editar habitación {{ hab.numero }}</h2>
+
+<form method="post" style="max-width:500px">
+  <label>Número:
+    <input name="numero" value="{{ hab.numero }}" required
+           style="width:100%; background:#1e1e2e; color:#cdd6f4;
+                  border:1px solid #45475a; padding:8px; border-radius:6px">
+  </label>
+  <label>Tipo:
+    <input name="tipo" value="{{ hab.tipo }}" required
+           style="width:100%; background:#1e1e2e; color:#cdd6f4;
+                  border:1px solid #45475a; padding:8px; border-radius:6px; margin-top:8px">
+  </label>
+  <label>Capacidad:
+    <input type="number" name="capacidad" value="{{ hab.capacidad }}" required min="1"
+           style="width:100%; background:#1e1e2e; color:#cdd6f4;
+                  border:1px solid #45475a; padding:8px; border-radius:6px; margin-top:8px">
+  </label>
+  <label>Precio por día:
+    <input type="number" step="0.01" name="precio_dia" value="{{ hab.precio_dia }}" required min="0"
+           style="width:100%; background:#1e1e2e; color:#cdd6f4;
+                  border:1px solid #45475a; padding:8px; border-radius:6px; margin-top:8px">
+  </label>
+  <label>Estado:
+    <select name="estado"
+            style="width:100%; background:#1e1e2e; color:#cdd6f4;
+                   border:1px solid #45475a; padding:8px; border-radius:6px; margin-top:8px">
+      <option value="libre" {% if hab.estado == 'libre' %}selected{% endif %}>Libre</option>
+      <option value="ocupada" {% if hab.estado == 'ocupada' %}selected{% endif %}>Ocupada</option>
+      <option value="mantenimiento" {% if hab.estado == 'mantenimiento' %}selected{% endif %}>Mantenimiento</option>
+    </select>
+  </label>
+  <label>Notas:
+    <textarea name="notas" rows="3"
+              style="width:100%; background:#1e1e2e; color:#cdd6f4;
+                     border:1px solid #45475a; padding:8px; border-radius:6px; margin-top:8px">{{ hab.notas or '' }}</textarea>
+  </label>
+  <button class="ok" style="margin-top:12px">💾 Guardar cambios</button>
+  <a href="{{ url_for('habitaciones') }}">
+    <button type="button" class="warn" style="margin-top:12px">Cancelar</button>
+  </a>
+</form>
+{% endblock %}

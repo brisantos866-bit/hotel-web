@@ -1,0 +1,36 @@
+{% extends "base.html" %}
+{% block titulo %}Registro de Hotel{% endblock %}
+{% block contenido %}
+<h2>🏨 Registrar hotel</h2>
+<p style="color:#a6adc8">
+  Ingresa los datos de tu hotel. Te enviaremos un PIN a tu correo para que puedas acceder.
+</p>
+
+<form method="post" style="max-width:500px">
+  <label>Nombre del hotel:
+    <input type="text" name="nombre" required placeholder="Hotel Ejemplo"
+           style="width:100%; background:#1e1e2e; color:#cdd6f4;
+                  border:1px solid #45475a; padding:8px; border-radius:6px">
+  </label>
+  <label>Correo electrónico:
+    <input type="email" name="email" required placeholder="hotel@correo.com"
+           style="width:100%; background:#1e1e2e; color:#cdd6f4;
+                  border:1px solid #45475a; padding:8px; border-radius:6px; margin-top:8px">
+  </label>
+  <label>Teléfono (opcional):
+    <input type="text" name="telefono" placeholder="+504 9999-9999"
+           style="width:100%; background:#1e1e2e; color:#cdd6f4;
+                  border:1px solid #45475a; padding:8px; border-radius:6px; margin-top:8px">
+  </label>
+  <label>Dirección (opcional):
+    <input type="text" name="direccion" placeholder="Calle, ciudad"
+           style="width:100%; background:#1e1e2e; color:#cdd6f4;
+                  border:1px solid #45475a; padding:8px; border-radius:6px; margin-top:8px">
+  </label>
+  <button class="ok" style="margin-top:12px">📧 Registrarme y recibir PIN</button>
+</form>
+
+<p style="margin-top:15px; color:#a6adc8">
+  ¿Ya tienes PIN? <a href="{{ url_for('login') }}" style="color:#89b4fa">Inicia sesión aquí</a>
+</p>
+{% endblock %}

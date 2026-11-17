@@ -1,0 +1,55 @@
+{% extends "base.html" %}
+{% block titulo %}Control de Hoteles y PINs{% endblock %}
+{% block contenido %}
+
+<div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 20px;">
+  <h2>🛂 Control de Hoteles y PINs</h2>
+  <a href="/alquileres"><button class="warn">← Volver al sistema</button></a>
+</div>
+
+<p style="color:#a6adc8; margin-bottom: 20px;">
+  Aquí puedes ver los hoteles registrados. Cuando el gerente realice el pago, cópiale el PIN y envíalo a su correo o WhatsApp.
+</p>
+
+<div style="background: #1e1e2e; padding: 15px; border-radius: 8px; border: 1px solid #45475a;">
+  <table style="width: 100%; border-collapse: collapse;">
+    <thead>
+      <tr style="border-bottom: 2px solid #45475a; text-align: left;">
+        <th style="padding: 10px;">ID</th>
+        <th style="padding: 10px;">Nombre del Hotel</th>
+        <th style="padding: 10px;">Correo</th>
+        <th style="padding: 10px;">PIN Actual</th>
+        <th style="padding: 10px;">Acciones</th>
+      </tr>
+    </thead>
+    <tbody>
+      {% for h in hoteles %}
+      <tr style="border-bottom: 1px solid #313244;">
+        <td style="padding: 10px; color: #a6adc8;">#{{ h.id }}</td>
+        <td style="padding: 10px; font-weight: bold;">{{ h.nombre }}</td>
+        <td style="padding: 10px; color: #89b4fa;">{{ h.email }}</td>
+        <td style="padding: 10px;">
+          <span style="font-family: monospace; font-size: 18px; font-weight: bold; color: #a6e3a1; letter-spacing: 2px;">
+            {{ h.pin }}
+          </span>
+        </td>
+        <td style="padding: 10px;">
+          <button class="ok" onclick="navigator.clipboard.writeText('{{ h.pin }}'); alert('✅ PIN {{ h.pin }} copiado al portapapeles.')">📋 Copiar PIN</button>
+          
+          <form method="post" action="/admin/control-pin/{{ h.id }}/regenerar" style="display: inline;" onsubmit="return confirm('¿Seguro que quieres generar un nuevo PIN para {{ h.nombre }}? El anterior dejará de funcionar.')">
+            <button class="warn">🔄 Regenerar</button>
+          </form>
+        </td>
+      </tr>
+      {% else %}
+      <tr>
+        <td colspan="5" style="padding: 20px; text-align: center; color: #a6adc8;">
+          No hay hoteles registrados aún.
+        </td>
+      </tr>
+      {% endfor %}
+    </tbody>
+  </table>
+</div>
+
+{% endblock %}

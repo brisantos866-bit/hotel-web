@@ -1,17 +1,73 @@
 {% extends "base.html" %}
-{% block titulo %}Acceso{% endblock %}
+{% block titulo %}Acceso Hotel{% endblock %}
 {% block contenido %}
-<div style="max-width:380px; margin:60px auto; text-align:center;">
-  <h2>🏨 Acceso Hotel</h2>
-  <p>Ingresa el correo y PIN de tu hotel</p>
-  <form method="post">
-    <input type="email" name="email" placeholder="correo@hotel.com" required
-           style="width:100%; padding:10px; margin:8px 0;">
-    <input type="text" name="pin" placeholder="PIN de 6 dígitos" required
-           inputmode="numeric" maxlength="6"
-           style="width:100%; padding:10px; margin:8px 0; font-size:20px;
-                  text-align:center; letter-spacing:6px;">
-    <button class="ok" style="width:100%;">Entrar</button>
-  </form>
+<div style="max-width: 400px; margin: 40px auto; background: #1e1e2e; padding: 25px; border-radius: 10px; border: 1px solid #45475a;">
+  
+  <h2 style="text-align: center; margin-bottom: 20px;">🏨 Acceso Hotel</h2>
+
+  <!-- Pestañas para cambiar entre Login y Registro -->
+  <div style="display: flex; margin-bottom: 20px; border-bottom: 1px solid #45475a;">
+    <button id="tab-login" onclick="mostrarLogin()" style="flex: 1; background: none; border: none; color: #cdd6f4; padding: 10px; font-size: 16px; border-bottom: 2px solid #89b4fa; cursor: pointer;">Iniciar Sesión</button>
+    <button id="tab-registro" onclick="mostrarRegistro()" style="flex: 1; background: none; border: none; color: #a6adc8; padding: 10px; font-size: 16px; border-bottom: 2px solid transparent; cursor: pointer;">Registrarme</button>
+  </div>
+
+  <!-- FORMULARIO DE LOGIN -->
+  <div id="form-login">
+    <form method="post">
+      <label style="display: block; margin-bottom: 10px; color: #a6adc8;">Correo electrónico:</label>
+      <input type="email" name="email" required placeholder="correo@hotel.com" 
+             style="width: 100%; background: #11111b; color: #cdd6f4; border: 1px solid #45475a; padding: 10px; border-radius: 6px; margin-bottom: 15px;">
+
+      <label style="display: block; margin-bottom: 10px; color: #a6adc8;">PIN de acceso:</label>
+      <input type="text" name="pin" required placeholder="PIN de 6 dígitos" maxlength="6"
+             style="width: 100%; background: #11111b; color: #cdd6f4; border: 1px solid #45475a; padding: 10px; border-radius: 6px; margin-bottom: 20px; letter-spacing: 5px; text-align: center; font-size: 18px;">
+
+      <button class="ok" style="width: 100%; padding: 12px; font-size: 16px;">Entrar</button>
+    </form>
+  </div>
+
+  <!-- FORMULARIO DE REGISTRO -->
+  <div id="form-registro" style="display: none;">
+    <form method="post" action="/registro">
+      <label style="display: block; margin-bottom: 10px; color: #a6adc8;">Nombre del Hotel:</label>
+      <input type="text" name="nombre" required placeholder="Hotel Ejemplo" 
+             style="width: 100%; background: #11111b; color: #cdd6f4; border: 1px solid #45475a; padding: 10px; border-radius: 6px; margin-bottom: 15px;">
+
+      <label style="display: block; margin-bottom: 10px; color: #a6adc8;">Correo electrónico:</label>
+      <input type="email" name="email" required placeholder="correo@hotel.com" 
+             style="width: 100%; background: #11111b; color: #cdd6f4; border: 1px solid #45475a; padding: 10px; border-radius: 6px; margin-bottom: 15px;">
+
+      <label style="display: block; margin-bottom: 10px; color: #a6adc8;">Teléfono (opcional):</label>
+      <input type="text" name="telefono" placeholder="+504 9999-9999" 
+             style="width: 100%; background: #11111b; color: #cdd6f4; border: 1px solid #45475a; padding: 10px; border-radius: 6px; margin-bottom: 15px;">
+
+      <label style="display: block; margin-bottom: 10px; color: #a6adc8;">Dirección (opcional):</label>
+      <input type="text" name="direccion" placeholder="Calle, ciudad" 
+             style="width: 100%; background: #11111b; color: #cdd6f4; border: 1px solid #45475a; padding: 10px; border-radius: 6px; margin-bottom: 20px;">
+
+      <button class="ok" style="width: 100%; padding: 12px; font-size: 16px;">Registrarme y solicitar PIN</button>
+    </form>
+  </div>
+
 </div>
+
+<script>
+function mostrarLogin() {
+  document.getElementById('form-login').style.display = 'block';
+  document.getElementById('form-registro').style.display = 'none';
+  document.getElementById('tab-login').style.borderBottomColor = '#89b4fa';
+  document.getElementById('tab-login').style.color = '#cdd6f4';
+  document.getElementById('tab-registro').style.borderBottomColor = 'transparent';
+  document.getElementById('tab-registro').style.color = '#a6adc8';
+}
+
+function mostrarRegistro() {
+  document.getElementById('form-login').style.display = 'none';
+  document.getElementById('form-registro').style.display = 'block';
+  document.getElementById('tab-login').style.borderBottomColor = 'transparent';
+  document.getElementById('tab-login').style.color = '#a6adc8';
+  document.getElementById('tab-registro').style.borderBottomColor = '#89b4fa';
+  document.getElementById('tab-registro').style.color = '#cdd6f4';
+}
+</script>
 {% endblock %}
